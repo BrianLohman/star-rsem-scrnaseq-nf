@@ -12,13 +12,13 @@ if (params.help) {
     Required arguments:
     -------------------
 
-    --reads         Full path to directory with reads
+    --reads         Full path to directory with reads. Default: ./fastq
 
     --outdir        Path to publish results. Default: ./results
 
-    --genome        Full path to STAR reference. Default is Hg38 in core group space
+    --genome        Full path to STAR reference. Default: Hg38 in core group space
 
-    --rsem_index    Full path to RSEM index. Default is Hg38 in core group space
+    --rsem_index    Full path to RSEM index. Default: Hg38 in core group space
 
     
     Description:
@@ -29,6 +29,7 @@ if (params.help) {
     Index BAMS (BAMS and indicies are published to params.outdir/bams)
 
     Run RSEM to get gene and isoform counts (saved to params.outdir/rsem_out)
+        NB: Deviates from original publication which use htseq-counts
 
     -----------------------------------------------------------------------------
     """.stripIndent()
@@ -36,7 +37,7 @@ if (params.help) {
 }
 
 // Set default required params
-params.reads = "/scratch/general/pe-nfs1/u0806040/A6412/fastq_test/*_{1,2}.fastq.gz"
+params.reads = "./fastq_test/*_{1,2}.fastq.gz"
 params.genome =  '/uufs/chpc.utah.edu/common/HIPAA/hci-bioinformatics1/atlatl/data/Human/GRCh38/release104/star125'
 params.rsem_index = "/uufs/chpc.utah.edu/common/HIPAA/hci-bioinformatics1/atlatl/data/Human/GRCh38/release104/rsem/RSEM"
 params.outdir = './results'
@@ -57,8 +58,6 @@ Channel
 // Maps each read-pair by using STAR
 process star {
     module 'star/2.7.8a'
-    cpus 12
-    memory 32.GB
     tag "$pair_id"
       
     input:
@@ -95,11 +94,9 @@ process star {
     """
 }
 
-// Build the indext for each BAM and generate index stats
+// Index BAMs
 process index {
     module 'samtools/1.12'
-    cpus 1
-    memory 16.GB
     tag "${pair_id}"
     publishDir "${params.outdir}/bams", mode:"copy"
 
@@ -119,8 +116,6 @@ process index {
 // RSEM to get gene and isoform counts
 process rsem {
     module 'rsem/1.3.0'
-    cpus 8
-    memory 16.GB
     tag "$pair_id"
     publishDir "${params.outdir}/rsem_out", mode:"copy"
  
