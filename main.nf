@@ -37,7 +37,7 @@ if (params.help) {
 }
 
 // Set default required params
-params.reads = "./fastq_test/*_{1,2}.fastq.gz"
+params.reads = "./fastq/*_{1,2}.fastq.gz"
 params.genome =  '/uufs/chpc.utah.edu/common/HIPAA/hci-bioinformatics1/atlatl/data/Human/GRCh38/release104/star125'
 params.rsem_index = "/uufs/chpc.utah.edu/common/HIPAA/hci-bioinformatics1/atlatl/data/Human/GRCh38/release104/rsem/RSEM"
 params.outdir = './results'
