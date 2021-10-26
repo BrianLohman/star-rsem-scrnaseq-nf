@@ -71,7 +71,6 @@ process star {
     script:
       """
       STAR --genomeDir $genome \
-      --genomeLoad LoadAndKeep \
       --readFilesIn $reads \
       --readFilesCommand zcat \
       --runThreadN 12 \
